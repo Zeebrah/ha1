@@ -51,18 +51,18 @@ sorted_unique_dates <-
 
 #2 loops
 # Calculating means for female subsample and every birth month
-mean_f <-
+mean_f_loop <-
   vector("numeric", length(unique(p3_data_clean$date_of_birth)))
 for (i in 1:length(unique_birth_dates)) {
-  mean_f[i] <- mean(p3_data_f$exp_by_1996[p3_data_f$date_of_birth ==
+  mean_f_loop[i] <- mean(p3_data_f$exp_by_1996[p3_data_f$date_of_birth ==
                                             sorted_unique_dates[i]])
 }
 
 # Calculating means for male subsample and every birth month
-mean_m <-
+mean_m_loop <-
   vector("numeric", length(unique(p3_data_clean$date_of_birth)))
 for (i in 1:length(unique_birth_dates)) {
-  mean_m[i] <- mean(p3_data_f$exp_by_1996[p3_data_m$date_of_birth ==
+  mean_m_loop[i] <- mean(p3_data_f$exp_by_1996[p3_data_m$date_of_birth ==
                                             sorted_unique_dates[i]])
 }
 
@@ -78,15 +78,10 @@ mean_loop <-
   )
 
 #2 apply
-mean_apply <-
-  data.frame(
-    date_of_birth = c(sorted_unique_dates, sorted_unique_dates),
-    gender = rep(c("F", "M"), c(252, 252)),
-    means = 0
-  )
-mean_apply <- as.data.frame(lapply(
+# Calulating mean, each intersection of date of birth and gender 
+# is a respective mean
+mean_apply <- tapply(
   p3_data_clean$exp_by_1996,
-  INDEX = p3_data_clean$date_of_birth,
+  INDEX = list(p3_data_clean$date_of_birth, p3_data_clean$gender),
   FUN = mean
-))
-
+)
