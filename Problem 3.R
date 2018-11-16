@@ -85,3 +85,14 @@ mean_apply <- tapply(
   INDEX = list(p3_data_clean$date_of_birth, p3_data_clean$gender),
   FUN = mean
 )
+
+#3
+# Trim the months of each year to create a plot
+trimmed_dates <- substr(as.character(sorted_unique_dates),rep(1,252),4)
+# To preserve old layout parameters
+old_par <- par()
+#
+plot(x = trimmed_dates, y=mean_apply[,1], type="p", col = "blue", xlab = "Year of Birth", ylab = "Work experience before 1996", pch=16)
+par(new=TRUE)
+points(trimmed_dates, y=mean_apply[,2], type="p", col = "red",pch =17)
+legend(x=1950, y=15.7, legend = c("Females","Males"), col = c("blue","red"), pch=c(16,17),bty="n")
