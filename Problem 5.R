@@ -1,3 +1,4 @@
+
 setwd("/Users/darafilyaskina/Desktop/notifications")
 #setwd("/Users/ivanloktaev/Yandex.Disk.localized/Uni/4\ Курс/Data\ Science/ha1\ materials/hw1p5/notifications")
 library(XML)
@@ -6,6 +7,9 @@ huinia<-xmlParse(unzip("notification__Adygeja_Resp_inc_20110101_000000_20110201_
 
 root <- xmlRoot(huinia)
 xmlName(root)
-root[[1]][2]
 
-      
+#create a dataframe of all nodes
+
+x<-xmlToDataFrame(root)
+
+## extract only those nodes that are needed
