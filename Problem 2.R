@@ -16,7 +16,6 @@ library(Hmisc)
 #merging things together
 data<-Merge(x1,x2,x3,x4,x5,x6,x7,x8,y,id = ~ id)
 
-#lm(y~x1, data = data)
 ##finding the appropriate model
 
 #generating a vector of variable names
@@ -43,7 +42,7 @@ for (i in 1:ncol(combinations)){
 number_of_model<-which(max(r_sqr) == r_sqr)
 #finding this model
 result<-combinations[,number_of_model]
-
+result
 
 
 
