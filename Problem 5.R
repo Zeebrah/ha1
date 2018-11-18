@@ -6,10 +6,11 @@ library(stringr)
 huinia<-xmlParse(unzip("notification__Adygeja_Resp_inc_20110101_000000_20110201_000000_2.xml.zip"))
 
 root <- xmlRoot(huinia)
-xmlName(root)
+names(root[[1]][[2]])
 
 #create a dataframe of all nodes
 
 x<-xmlToDataFrame(root)
 
 ## extract only those nodes that are needed
+xmlChildren(root)
