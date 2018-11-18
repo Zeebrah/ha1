@@ -25,6 +25,7 @@ miss_apply[, 2] <- apply(miss_na_matrix, 2, sum)
 # First convert the data.frame into data.table
 p3_data_table <- as.data.table(p3_data)
 miss_dtable <- p3_data_table[,lapply(.SD, is.na)][,lapply(.SD, sum)]
+#Same logic but now the output is transposed
 
 #2 Preparation
 # First we clean our data set of NAs in exp_by_1996
@@ -202,11 +203,11 @@ tot_exp_age <- function(id, age){
     return("FIELD_NOT_FOUND")
   }
   current_date <- as.numeric(paste(current_year,current_month,sep = ""))
-  tot_exp_age <- 12*p3_data$exp_by_1996[id] + tot_epx_by(i,by = current_date)
+  tot_exp_age <- 12*p3_data$exp_by_1996[id] + tot_exp_by(i,by = current_date)
   return(tot_exp_age)
 }
 # For checks
-# tot_exp_age(2,79)
+# ot_exp_age(2,49)
 
 #8
 # Predefine output data.frame
