@@ -27,8 +27,11 @@ p3_data_table <- as.data.table(p3_data)
 miss_dtable <- p3_data_table[,lapply(.SD, is.na)][,lapply(.SD, sum)]
 
 #2 Preparation
-# First, we clean our data set
-p3_data_clean <- na.omit(p3_data)
+# First we clean our data set of NAs in exp_by_1996
+# so that the mean function do not freak out
+p3_data_clean <- as.data.table(p3_data)
+p3_data_clean <- as.data.frame(p3_data_clean[!is.na(p3_data_clean$exp_by_1996),])
+
 # Now, we can be sure that set is clean of missing values using algorithm from #1
 # miss_apply_clean <- data.frame(variable = names(p3_data), num_miss = 0)
 # miss_na_matrix_clean <- apply(p3_data_clean, 2, is.na)
@@ -37,7 +40,7 @@ p3_data_clean <- na.omit(p3_data)
 # Since we  need to average out by ar not a month we convert
 # year and month to just year
 p3_data_clean$date_of_birth <-
-  substr(as.character(p3_data_clean$date_of_birth), rep(1, 78806), 4)
+  substr(as.character(p3_data_clean$date_of_birth), rep(1, 98990), 4)
 
 unique_birth_dates <- unique(p3_data_clean$date_of_birth)
 p3_data_m <- p3_data_clean[p3_data_clean$gender == "M",]
@@ -85,7 +88,7 @@ names(mean_loop) <- c("F", "M", "Year")
 #2 apply
 # Converting the year and month of birth to just year of birth (again, just in case)
 p3_data_clean$date_of_birth <-
-  substr(as.character(p3_data_clean$date_of_birth), rep(1, 78806), 4)
+  substr(as.character(p3_data_clean$date_of_birth), rep(1, 98990), 4)
 
 # Calculating the mean by year and gender
 mean_apply <- tapply(
@@ -94,7 +97,9 @@ mean_apply <- tapply(
   FUN = mean
 )
 
-
+#2 data.table
+#First we clean the table from missing values
+p3_data_table_clean<-p3_data_table[!is.na(p3_data_table$exp_by_1996),]
 
 #3 Graphs
 # Trim the months of each year to create a plot (again)
@@ -189,5 +194,26 @@ tot_epx_by <- function(id,by){
   return(mths_worked_by)
 }
 
+#7
 
-  
+
+
+#8
+# Predefine output data.frame
+# Again, slow but surely works as I intended
+tot_exp_by_201112 <- data.frame(individual = 1:100000, Total_WE_by_201112 = NA)
+for (i in 1:100000){
+  tot_exp_by_201112[i,2] <- tot_epx_by(i,201112)
+}
+tot_exp_by_201112
+
+#9
+id=1
+age=40
+curret
+age_by_1996 <- 199601 - p3_data$date_of_birth[1]
+by_1 <- as.numeric(substr(as.character(by), 1,4))
+by_2 <- as.numeric(substr(as.character(by), 5,6)) 
+tot_exp_age
+total_we <- 12*exp_by_1996 + tot_epx_by
+current_year <- 40 + as.numeric(substr(as.character(p3_data$date_of_birth[1]), 1,4))
