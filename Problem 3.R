@@ -187,12 +187,5 @@ tot_epx_by <- function(id,by=199601){
   mths_worked_by <- sum(exp_vector[1:by_used])
   return(mths_worked_by)
 }
-  
-tot_epx_by(6,201412)
-  
-  
-  
-if (miss_dummie_apply[id,2] > 0){
-  
-}
+
   
