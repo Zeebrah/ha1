@@ -143,6 +143,7 @@ miss_dummie_loop <-
 p3_data_twisted <- p3_data
 p3_data_twisted$gender = 1
 p3_data_twisted$exp_by_1996 = 1
+p3_data_twisted$date_of_birth = 1
 
 #This loop is painfully slow but appears to work correctly anyways
 for (i in 1:100000) {
@@ -160,6 +161,15 @@ miss_dummie_apply[, 2] <- apply(X = miss_dummie_apply_list, MARGIN = 2, FUN = su
 #4 data.frame
 
 #5
+# Predefine the variable
+tot_exp <- data.frame(individual = 1:100000, Total_WE = NA)
+# I would use loops
+for (i in 1:100000){
+  if (miss_dummie_apply[i,2] > 0){
+    break
+  }
+    tot_exp[i,2] <- sum(p3_data_twisted[i,])
+}
 
 
-
+#6
