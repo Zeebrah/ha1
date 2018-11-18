@@ -141,9 +141,9 @@ miss_dummie_loop <-
 # I will introduce special version of p3_data that does not have any missing values
 # in gender, exp_by_1996 ao that our numbers are not skewd
 p3_data_twisted <- p3_data
-p3_data_twisted$gender = 1
-p3_data_twisted$exp_by_1996 = 1
-p3_data_twisted$date_of_birth = 1
+p3_data_twisted$gender = 0
+p3_data_twisted$exp_by_1996 = 0
+p3_data_twisted$date_of_birth = 0
 
 #This loop is painfully slow but appears to work correctly anyways
 for (i in 1:100000) {
@@ -161,15 +161,38 @@ miss_dummie_apply[, 2] <- apply(X = miss_dummie_apply_list, MARGIN = 2, FUN = su
 #4 data.frame
 
 #5
+# Only do this step if #4 loop was skipped
+p3_data_twisted <- p3_data
+p3_data_twisted$gender = 0
+p3_data_twisted$exp_by_1996 = 0
+p3_data_twisted$date_of_birth = 0
+
 # Predefine the variable
 tot_exp <- data.frame(individual = 1:100000, Total_WE = NA)
-# I would use loops
+# Slow but does the job anyways
 for (i in 1:100000){
   if (miss_dummie_apply[i,2] > 0){
-    break
+    next
   }
     tot_exp[i,2] <- sum(p3_data_twisted[i,])
 }
 
-
 #6
+tot_epx_by <- function(id,by=199601){
+  #Several mundane steps to transform a datae form easy to usable form
+  by_1 <- as.numeric(substr(as.character(by), 1,4))
+  by_2 <- as.numeric(substr(as.character(by), 5,6)) 
+  by_used <- 12*c((by_1 - c(1996))) + by_2
+  exp_vector <-as.numeric(p3_data[id, 4:231])
+  mths_worked_by <- sum(exp_vector[1:by_used])
+  return(mths_worked_by)
+}
+  
+tot_epx_by(6,201412)
+  
+  
+  
+if (miss_dummie_apply[id,2] > 0){
+  
+}
+  
