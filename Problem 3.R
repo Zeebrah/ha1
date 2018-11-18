@@ -178,14 +178,16 @@ for (i in 1:100000){
 }
 
 #6
-tot_epx_by <- function(id,by=199601){
+tot_epx_by <- function(id,by){
   #Several mundane steps to transform a datae form easy to usable form
   by_1 <- as.numeric(substr(as.character(by), 1,4))
   by_2 <- as.numeric(substr(as.character(by), 5,6)) 
+  # What the heart of the function actually uses
   by_used <- 12*c((by_1 - c(1996))) + by_2
   exp_vector <-as.numeric(p3_data[id, 4:231])
   mths_worked_by <- sum(exp_vector[1:by_used])
   return(mths_worked_by)
 }
+
 
   
