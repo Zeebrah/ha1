@@ -183,7 +183,7 @@ for (i in 1:100000){
 }
 
 #6
-tot_epx_by <- function(id,by){
+tot_exp_by <- function(id,by){
   #Several mundane steps to transform a datae form easy to usable form
   by_1 <- as.numeric(substr(as.character(by), 1,4))
   by_2 <- as.numeric(substr(as.character(by), 5,6)) 
@@ -195,25 +195,32 @@ tot_epx_by <- function(id,by){
 }
 
 #7
-
-
+tot_exp_age <- function(id, age){
+  current_year <- age + as.numeric(substr(as.character(p3_data$date_of_birth[id]), 1,4))
+  current_month <- as.numeric(substr(as.character(p3_data$date_of_birth[id]), 5,6))
+  if (current_year > 2014 | current_year < 1996){
+    return("FIELD_NOT_FOUND")
+  }
+  current_date <- as.numeric(paste(current_year,current_month,sep = ""))
+  tot_exp_age <- 12*p3_data$exp_by_1996[id] + tot_epx_by(i,by = current_date)
+  return(tot_exp_age)
+}
+# For checks
+# tot_exp_age(2,79)
 
 #8
 # Predefine output data.frame
 # Again, slow but surely works as I intended
 tot_exp_by_201112 <- data.frame(individual = 1:100000, Total_WE_by_201112 = NA)
 for (i in 1:100000){
-  tot_exp_by_201112[i,2] <- tot_epx_by(i,201112)
+  tot_exp_by_201112[i,2] <- tot_exp_by(i,201112)
 }
-tot_exp_by_201112
 
 #9
-id=1
-age=40
-curret
-age_by_1996 <- 199601 - p3_data$date_of_birth[1]
-by_1 <- as.numeric(substr(as.character(by), 1,4))
-by_2 <- as.numeric(substr(as.character(by), 5,6)) 
-tot_exp_age
-total_we <- 12*exp_by_1996 + tot_epx_by
-current_year <- 40 + as.numeric(substr(as.character(p3_data$date_of_birth[1]), 1,4))
+# Predefine output data.frame
+# Again, slow but surely works as I intended
+tot_exp_age_60 <- data.frame(individual = 1:100000, Total_WE_by_60 = NA)
+for (i in 1:100000){
+  tot_exp_age_60[i,2] <- tot_exp_age(i,60)
+}
+tot_exp_age_60
