@@ -22,13 +22,13 @@ miss_apply[, 2] <- apply(miss_na_matrix, 2, sum)
 # Same result as before, now table is miss_apply
 
 #1 data.table
-miss_dtable <-
-  #miss_na_matrix_dtable <- p3_data.table[,sum(is.na(p3_data.table)) ,]
-  #is.na(p3_data.table)
-  
-  #2 Preparation
-  # First, we clean our data set
-  p3_data_clean <- na.omit(p3_data)
+# First convert the data.frame into data.table
+p3_data_table <- as.data.table(p3_data)
+miss_dtable <- p3_data_table[,lapply(.SD, is.na)][,lapply(.SD, sum)]
+
+#2 Preparation
+# First, we clean our data set
+p3_data_clean <- na.omit(p3_data)
 # Now, we can be sure that set is clean of missing values using algorithm from #1
 # miss_apply_clean <- data.frame(variable = names(p3_data), num_miss = 0)
 # miss_na_matrix_clean <- apply(p3_data_clean, 2, is.na)
@@ -158,3 +158,8 @@ miss_dummie_apply_list <- as.data.frame(apply(X = p3_data[, 4:231], MARGIN = 1, 
 miss_dummie_apply[, 2] <- apply(X = miss_dummie_apply_list, MARGIN = 2, FUN = sum)
 
 #4 data.frame
+
+#5
+
+
+
