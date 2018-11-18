@@ -22,24 +22,30 @@ miss_apply[, 2] <- apply(miss_na_matrix, 2, sum)
 # Same result as before, now table is miss_apply
 
 #1 data.table
-#miss_dtable
-#miss_na_matrix_dtable <- p3_data.table[,sum(is.na(p3_data.table)) ,]
-#is.na(p3_data.table)
-
-#2 Preparation
-# First, we clean our data set
-p3_data_clean <- na.omit(p3_data)
+miss_dtable <-
+  #miss_na_matrix_dtable <- p3_data.table[,sum(is.na(p3_data.table)) ,]
+  #is.na(p3_data.table)
+  
+  #2 Preparation
+  # First, we clean our data set
+  p3_data_clean <- na.omit(p3_data)
 # Now, we can be sure that set is clean of missing values using algorithm from #1
-#
 # miss_apply_clean <- data.frame(variable = names(p3_data), num_miss = 0)
 # miss_na_matrix_clean <- apply(p3_data_clean, 2, is.na)
 # miss_apply_clean[, 2] <- apply(miss_na_matrix_clean, 2, sum)
 
-unique_birth_dates <- unique(p3_data$date_of_birth)
+# Since we  need to average out by ar not a month we convert
+# year and month to just year
+p3_data_clean$date_of_birth <-
+  substr(as.character(p3_data_clean$date_of_birth), rep(1, 78806), 4)
+
+unique_birth_dates <- unique(p3_data_clean$date_of_birth)
 p3_data_m <- p3_data_clean[p3_data_clean$gender == "M",]
 p3_data_f <- p3_data_clean[p3_data_clean$gender == "F",]
 sorted_unique_dates <-
   sort(unique(p3_data_clean$date_of_birth), decreasing = FALSE)
+
+
 
 # # By far the easiest way to calculate the means by factors,
 # # Unfortunately, we are not given a choice here
@@ -54,45 +60,101 @@ sorted_unique_dates <-
 mean_f_loop <-
   vector("numeric", length(unique(p3_data_clean$date_of_birth)))
 for (i in 1:length(unique_birth_dates)) {
-  mean_f_loop[i] <- mean(p3_data_f$exp_by_1996[p3_data_f$date_of_birth ==
-                                            sorted_unique_dates[i]])
+  mean_f_loop[i] <-
+    mean(p3_data_f$exp_by_1996[p3_data_f$date_of_birth ==
+                                 sorted_unique_dates[i]])
 }
 
 # Calculating means for male subsample and every birth month
 mean_m_loop <-
   vector("numeric", length(unique(p3_data_clean$date_of_birth)))
 for (i in 1:length(unique_birth_dates)) {
-  mean_m_loop[i] <- mean(p3_data_f$exp_by_1996[p3_data_m$date_of_birth ==
-                                            sorted_unique_dates[i]])
+  mean_m_loop[i] <-
+    mean(p3_data_f$exp_by_1996[p3_data_m$date_of_birth ==
+                                 sorted_unique_dates[i]])
 }
 
-# Binding a vector 
-mean_fm <- c(mean_f, mean_m)
-
-# Formating the output as a data table for an ease of use
-mean_loop <-
-  data.frame(
-    date_of_birth = c(sorted_unique_dates, sorted_unique_dates),
-    gender = rep(c("F", "M"), c(252, 252)),
-    means = mean_fm
-  )
+# Binding a output from two groups into a matrix
+mean_loop <- matrix(c(mean_f_loop, mean_m_loop), ncol = 2)
+# Converting to data.frame to give names
+mean_loop <- as.data.frame(mean_loop)
+mean_loop$date_of_birth <- sorted_unique_dates
+# Formating the names to be more logical
+names(mean_loop) <- c("F", "M", "Year")
 
 #2 apply
-# Calulating mean, each intersection of date of birth and gender 
-# is a respective mean
+# Converting the year and month of birth to just year of birth (again, just in case)
+p3_data_clean$date_of_birth <-
+  substr(as.character(p3_data_clean$date_of_birth), rep(1, 78806), 4)
+
+# Calculating the mean by year and gender
 mean_apply <- tapply(
   p3_data_clean$exp_by_1996,
   INDEX = list(p3_data_clean$date_of_birth, p3_data_clean$gender),
   FUN = mean
 )
 
-#3
-# Trim the months of each year to create a plot
-trimmed_dates <- substr(as.character(sorted_unique_dates),rep(1,252),4)
+
+
+#3 Graphs
+# Trim the months of each year to create a plot (again)
+trimmed_dates <-
+  substr(as.character(sorted_unique_dates), rep(1, 252), 4)
 # To preserve old layout parameters
 old_par <- par()
-#
-plot(x = trimmed_dates, y=mean_apply[,1], type="p", col = "blue", xlab = "Year of Birth", ylab = "Work experience before 1996", pch=16)
-par(new=TRUE)
-points(trimmed_dates, y=mean_apply[,2], type="p", col = "red",pch =17)
-legend(x=1950, y=15.7, legend = c("Females","Males"), col = c("blue","red"), pch=c(16,17),bty="n")
+
+# For females
+plot(
+  x = 1950:1970,
+  y = mean_apply[, 1],
+  type = "b",
+  col = "blue",
+  xlab = "Year of Birth",
+  ylab = "Work experience before 1996",
+  pch = 16
+)
+par(new = TRUE)
+# For males
+points(
+  x = 1950:1970,
+  y = mean_apply[, 2],
+  type = "b",
+  col = "red",
+  pch = 17
+)
+legend(
+  x = 1952,
+  y = 15.1,
+  legend = c("Females", "Males"),
+  col = c("blue", "red"),
+  pch = c(16, 17),
+  bty = "n"
+)
+
+#4 loop
+# We have to go back to using non-clean data, since we look for missing values
+
+# Predefine a table for our inquiery
+miss_dummie_loop <-
+  data.frame(individual_id = c(1:100000),
+             num_dummies_miss = 0)
+# I will introduce special version of p3_data that does not have any missing values
+# in gender, exp_by_1996 ao that our numbers are not skewd
+p3_data_twisted <- p3_data
+p3_data_twisted$gender = 1
+p3_data_twisted$exp_by_1996 = 1
+
+#This loop is painfully slow but appears to work correctly anyways
+for (i in 1:100000) {
+  miss_dummie_loop[i, 2] <- sum(is.na(p3_data_twisted[i,]))
+}
+
+#4 apply
+miss_dummie_apply <- 
+  data.frame(individual_id = c(1:100000),
+             num_dummies_miss = 0)
+
+miss_dummie_apply_list <- as.data.frame(apply(X = p3_data[, 4:231], MARGIN = 1, FUN = is.na))
+miss_dummie_apply[, 2] <- apply(X = miss_dummie_apply_list, MARGIN = 2, FUN = sum)
+
+#4 data.frame
