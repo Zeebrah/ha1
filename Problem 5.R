@@ -10,6 +10,11 @@ xmlName(root)
 
 #create a dataframe of all nodes
 
-x<-xmlToDataFrame(root)
+x<-xmlToDataFrame(root, stringsAsFactors = FALSE)
 
 ## extract only those nodes that are needed
+xmlChildren(root)
+library(data.table)
+x<-as.data.table(x)
+x[,placingWay.name:=lapply("placingWay",substr(as.character(x[1,5]),1,2))]
+  
